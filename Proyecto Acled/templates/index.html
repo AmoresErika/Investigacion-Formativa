@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Seguridad Territorial - Ecuador</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        h1 { color: #2c3e50; }
+        button { margin-top: 10px; padding: 10px 15px; cursor: pointer; }
+        input[type="file"], input[type="text"] { margin-top: 5px; padding: 5px; }
+        .section { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        .resultado { background: #f4f4f4; padding: 10px; margin-top: 10px; border-radius: 5px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Seguridad Territorial - Ecuador</h1>
+
+    <div class="section">
+        <h2>1️⃣ Cargar CSV</h2>
+        <input type="file" id="csvFile">
+        <button onclick="cargarCSV()">Cargar Archivo</button>
+        <div id="resultadoCarga" class="resultado"></div>
+    </div>
+
+    <div class="section">
+        <h2>2️⃣ Entrenar Modelo</h2>
+        <button onclick="entrenarModelo()">Entrenar Modelo</button>
+        <div id="resultadoEntrenamiento" class="resultado"></div>
+    </div>
+
+    <div class="section">
+        <h2>3️⃣ Predecir Nuevo Evento</h2>
+        <label>Provincia:</label>
+        <input type="text" id="provincia" placeholder="Ej: Pichincha"><br>
+        <label>Tipo de evento:</label>
+        <input type="text" id="tipoEvento" placeholder="Ej: Protest"><br>
+        <label>Fatalidades:</label>
+        <input type="text" id="fatalidades" placeholder="Ej: 0"><br>
+        <button onclick="predecir()">Predecir</button>
+        <div id="resultadoPrediccion" class="resultado"></div>
+    </div>
+
+    <script>
+        function cargarCSV() {
+            const fileInput = document.getElementById('csvFile');
+            if (!fileInput.files.length) {
+                alert('Selecciona un archivo CSV');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('archivo', fileInput.files[0]);
+
+            fetch('/cargar_datos', { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('resultadoCarga').innerText = JSON.stringify(data, null, 2);
+            });
+        }
+
+        function entrenarModelo() {
+            fetch('/entrenar_modelo', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('resultadoEntrenamiento').innerText = JSON.stringify(data, null, 2);
+            });
+        }
+
+        function predecir() {
+            const data = {
+                admin1: document.getElementById('provincia').value,
+                event_type: document.getElementById('tipoEvento').value,
+                fatalities: Number(document.getElementById('fatalidades').value)
+            };
+
+            fetch('/predecir', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('resultadoPrediccion').innerText = JSON.stringify(data, null, 2);
+            });
+        }
+    </script>
+</body>
+</html>
