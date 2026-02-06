@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard de Seguridad Territorial</title>
+</head>
+<body>
+    <h1>Dashboard de Seguridad Territorial</h1>
+
+    <h2>Evolución Temporal</h2>
+    {{ grafico_temporal|safe }}
+
+    <h2>Fatalidades por Provincia</h2>
+    {{ grafico_provincias|safe }}
+
+    <h2>Eventos por Tipo</h2>
+    {{ grafico_tipos|safe }}
+</body>
+</html>
